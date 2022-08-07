@@ -1,4 +1,4 @@
-import {getRandomArrayElement, getRandomPositiveInteger, getRandomArrayElements, getRandomPositiveFloat, getRandomArrayUniqueElement} from './utils.js';
+import {getRandomArrayElement, getRandomPositiveInteger, getRandomPositiveFloat, getRandomArrayUniqueElement} from './utils.js';
 
 const TITLES = [
   'the best offer',
@@ -57,13 +57,21 @@ const FEATURES_ELEMENTS = [
   'conditioner'
 ];
 
-const FEATURES = getRandomArrayElements(FEATURES_ELEMENTS, getRandomPositiveInteger(1, 6));
 const PHOTOS_ELEMENTS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/duonguyen-8LrGtIxxa4w.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/brandon-hoogenboom-SNxQGWxZQi0.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg'
 ];
-const PHOTOS = getRandomArrayElements(PHOTOS_ELEMENTS, getRandomPositiveInteger(1, 3));
+
+const getArray = (array, value) => {
+  const list= [];
+  const elementsAmount = getRandomPositiveInteger(1, value);
+  for (let i = 0; i < elementsAmount; i++) {
+    list.push(getRandomArrayElement(array));
+  }
+  return list;
+};
+
 for (let i = 1; i <= ADVERTISEMENTS_AMOUNT; i++) {
   AVATARS.push(`img/avatars/user${i.toString().padStart(2, '0')}.png`);
 }
@@ -91,9 +99,9 @@ const createAdvertisement = () => {
       guests: getRandomArrayElement(GUESTS),
       checkin: getRandomArrayElement(CHECKINS),
       checkouts: getRandomArrayElement(CHECKOUTS),
-      features: FEATURES,
+      features: getArray(FEATURES_ELEMENTS, 6),
       description: getRandomArrayUniqueElement(DESCRIPTIONS),
-      photos: PHOTOS,
+      photos: getArray(PHOTOS_ELEMENTS, 3),
     },
   };
 };
