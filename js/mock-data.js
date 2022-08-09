@@ -14,7 +14,7 @@ const TITLES = [
 ];
 const ADVERTISEMENTS_AMOUNT = 10;
 const AVATARS = [];
-const PRICES = Array.from({length:1e5}, (_, index) => index+ 500);
+const PRICES = [20000, 30000, 55000, 40000, 18000, 25000, 13000, 19000, 33000, 70000];
 const TYPES = [
   'palace',
   'flat',
@@ -63,13 +63,13 @@ const PHOTOS_ELEMENTS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg'
 ];
 
-const getArray = (array, value) => {
-  const list= [];
+const getMockDataArray = (array, value) => {
+  const newArray= [];
   const elementsAmount = getRandomPositiveInteger(1, value);
   for (let i = 0; i < elementsAmount; i++) {
-    list.push(getRandomArrayElement(array));
+    newArray.push(getRandomArrayElement(array));
   }
-  return list;
+  return newArray;
 };
 
 for (let i = 1; i <= ADVERTISEMENTS_AMOUNT; i++) {
@@ -99,9 +99,9 @@ const createAdvertisement = () => {
       guests: getRandomArrayElement(GUESTS),
       checkin: getRandomArrayElement(CHECKINS),
       checkouts: getRandomArrayElement(CHECKOUTS),
-      features: getArray(FEATURES_ELEMENTS, 6),
+      features: getMockDataArray(FEATURES_ELEMENTS, 6),
       description: getRandomArrayUniqueElement(DESCRIPTIONS),
-      photos: getArray(PHOTOS_ELEMENTS, 3),
+      photos: getMockDataArray(PHOTOS_ELEMENTS, 3),
     },
   };
 };
