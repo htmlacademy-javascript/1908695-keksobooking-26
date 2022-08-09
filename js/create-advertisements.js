@@ -82,5 +82,5 @@ const getAdvertisements = () => {
   });
   mapCanvas.append(advertisementsFragment.firstElementChild);
 };
+export {getAdvertisements};
 
-getAdvertisements();
