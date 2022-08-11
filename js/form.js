@@ -1,10 +1,11 @@
-
 const adForm = document.querySelector('.ad-form');
 const mapFilters = document.querySelector('.map__filters');
 const housingTypeInput = adForm.querySelector('#type');
 const priceInput = adForm.querySelector('#price');
-const checkInInput = document.querySelector('#timein');
-const checkOutInput = document.querySelector('#timeout');
+const checkInInput = adForm.querySelector('#timein');
+const checkOutInput = adForm.querySelector('#timeout');
+const roomNumberInput = adForm.querySelector('#room_number');
+const capacityInput = adForm.querySelector('#capacity');
 
 const MIN_PRICE_OF_HOUSING = {
   'palace': 10000,
@@ -15,10 +16,10 @@ const MIN_PRICE_OF_HOUSING = {
 };
 
 const ROOM_CAPACITY = {
-  1: ['для 1 гостя'],
-  2: ['для 2 гостей', 'для 1 гостя'],
-  3: ['для 3 гостей', 'для 2 гостей', 'для 1 гостя'],
-  100: ['не для гостей']
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0']
 };
 
 //функция для деактивации формы
@@ -30,9 +31,11 @@ const disableForm = (form) => {
     element.setAttribute('disabled', 'disabled');
   });
 };
+
 //функция для очистки формы и возвращения к первоначальным значениям
 const resetAdForm = () => {
   priceInput.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
+  capacityInput.value = '1';
 };
 
 //функция для активации формы пока закомментирована, чтобы линтер не ругался на неиспользованную функцию в коде
@@ -54,6 +57,10 @@ const pristine = new Pristine(adForm, {
   errorTextClass: 'text-pristine',
   errorTextTag: 'div'
 });
+
+//функции для валидации полей с количеством комнат и количеством гостей и генерация сообщения об ошибке
+const validateRoomNumberInput = () => ROOM_CAPACITY[roomNumberInput.value].includes(capacityInput.value);
+const getCapacityErrorMessage = () => `Размещение в ${roomNumberInput.value} ${roomNumberInput.value === '1' ? 'комнате' : 'комнатах'} для ${capacityInput.value} ${capacityInput.value === '1' ? 'гостя' : 'гостей'} невозможно`;
 
 //функции синхронизации для чекина и чекаута для передачи по ссылке при изменении значения одного из полей
 const onCheckInInputChange = () => {
@@ -77,6 +84,7 @@ const onHousingTypeInputChange = () => {
   priceInput.min = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
   priceInput.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
 };
+
 //функция обработки события отправки формы для передачи по ссылке
 const onAdFormSubmit = (evt) => {
   const isValid = pristine.validate();
@@ -89,6 +97,8 @@ const onAdFormSubmit = (evt) => {
 const getFormValidation = () => {
   adForm.addEventListener('submit', onAdFormSubmit);
   pristine.addValidator(priceInput, validatePriceInput, getPriceErrorMessage);
+  pristine.addValidator(capacityInput, validateRoomNumberInput, getCapacityErrorMessage);
+  pristine.addValidator(roomNumberInput, validateRoomNumberInput, getCapacityErrorMessage);
   housingTypeInput.addEventListener('change', onHousingTypeInputChange);
   checkInInput.addEventListener('change', onCheckInInputChange);
   checkInInput.addEventListener('change', onCheckOutInputChange);
