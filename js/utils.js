@@ -1,19 +1,18 @@
 //функция для возврата случайного целого числа в заданном диаипазоне
-const getRandomPositiveInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
-  const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
+const getRandomPositiveInteger = (minValue, maxValue) => {
+  const lower = Math.ceil(Math.min(Math.abs(minValue), Math.abs(maxValue)));
+  const upper = Math.floor(Math.max(Math.abs(minValue), Math.abs(maxValue)));
   const result = Math.random() * (upper - lower + 1) + lower;
   return Math.floor(result);
 };
 
-getRandomPositiveInteger(5, 15);
 //функция для возврата случайного числа с плавающей точкой в заданном диапазоне
-function getRandomPositiveFloat (a, b, digits = 1) {
+function getRandomPositiveFloat (minValue, maxValue, digitsAfterPoint) {
   // Чтобы не заставлять пользователя нашей функции помнить порядок аргументов,
   // реализуем поддержку передачи минимального и максимального значения в любом порядке,
   // а какое из них большее и меньшее вычислим с помощью Math.min и Math.max
-  const lower = Math.min(Math.abs(a), Math.abs(b));
-  const upper = Math.max(Math.abs(a), Math.abs(b));
+  const lower = Math.min(Math.abs(minValue), Math.abs(maxValue));
+  const upper = Math.max(Math.abs(minValue), Math.abs(maxValue));
   // Обратите внимание, чтобы учесть условие, что диапазон может быть [0, ∞),
   // мы не ругаем пользователя за переданное отрицательное число,
   // а просто берём его по модулю с помощью Math.abs
@@ -26,7 +25,7 @@ function getRandomPositiveFloat (a, b, digits = 1) {
   // И в конце с помощью метода toFixed любого числа в JavaScript
   // указать требуемое количество знаков после точки.
   // Метод возвращает строку, поэтому с помощью унарного плюса превращаем её в число
-  return +result.toFixed(digits);
+  return +result.toFixed(digitsAfterPoint);
 }
 
 //функция возвращает случайное число из диапазона
