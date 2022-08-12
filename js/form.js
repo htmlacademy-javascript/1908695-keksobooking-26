@@ -61,7 +61,7 @@ const pristine = new Pristine(adForm, {
 //функции для валидации полей с количеством комнат и количеством гостей и генерация сообщения об ошибке
 const validateRoomNumberInput = () => ROOM_CAPACITY[roomNumberInput.value].includes(capacityInput.value);
 const getCapacityErrorMessage = () => `Размещение в ${roomNumberInput.value} ${roomNumberInput.value === '1' ? 'комнате' : 'комнатах'} для ${capacityInput.value} ${capacityInput.value === '1' ? 'гостя' : 'гостей'} невозможно`;
-
+const onSyncValidCapacityRoom = () => pristine.validate([roomNumberInput, capacityInput]);
 //функции синхронизации для чекина и чекаута для передачи по ссылке при изменении значения одного из полей
 const onCheckInInputChange = () => {
   checkOutInput.value = checkInInput.value;
@@ -102,6 +102,8 @@ const getFormValidation = () => {
   housingTypeInput.addEventListener('change', onHousingTypeInputChange);
   checkInInput.addEventListener('change', onCheckInInputChange);
   checkInInput.addEventListener('change', onCheckOutInputChange);
+  roomNumberInput.addEventListener('change', onSyncValidCapacityRoom);
+  capacityInput.addEventListener('change', onSyncValidCapacityRoom);
 };
 
 //функции ниже потом внесу в другие функции когда под них появится логика
