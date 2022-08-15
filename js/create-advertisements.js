@@ -2,7 +2,7 @@ import  {createAdvertisements} from './mock-data.js';
 
 const IMG_WIDTH = 45;
 const IMG_HEIGHT = 40;
-const housingTypes = {
+const housingType = {
   flat : 'Квартира',
   bungalow: 'Бунгало',
   house: 'Дом',
@@ -31,21 +31,21 @@ const advertisements = createAdvertisements();
 
 const advertisementsFragment = document.createDocumentFragment();
 
-const checkDataPresentation = (object, objectKeys) => {
-  Object.keys(objectKeys).forEach((key) => {
-    if (!key) {
-      object.querySelector(`.popup__${OFFER_KEYS[key]}`).classList.add('hidden');
+const checkDataPresentation = (advertOffer, advertOfferKeys) => {
+  Object.keys(advertOfferKeys).forEach((advertOfferKey) => {
+    if (!advertOfferKey) {
+      advertOffer.querySelector(`.popup__${OFFER_KEYS[advertOfferKey]}`).classList.add('hidden');
     }
   });
 };
 
-const createImage = (objectKey) => {
+const createImage = (avertOfferPhotosKey) => {
   const newImage = document.createElement('img');
   newImage.classList.add('popup__photo');
   newImage.width = IMG_WIDTH;
   newImage.height = IMG_HEIGHT;
   newImage.alt = 'Фотография жилья';
-  newImage.src = objectKey;
+  newImage.src = avertOfferPhotosKey;
   return newImage;
 };
 
@@ -62,7 +62,7 @@ const getAdvertisements = () => {
     advertisementElement.querySelector('.popup__title').textContent = title;
     advertisementElement.querySelector('.popup__text--address').textContent = address;
     advertisementElement.querySelector('.popup__text--price').firstChild.data = price;
-    advertisementElement.querySelector('.popup__type').textContent = housingTypes[type];
+    advertisementElement.querySelector('.popup__type').textContent = housingType[type];
     advertisementElement.querySelector('.popup__text--capacity').textContent = `${rooms} комнаты для ${guests} гостей`;
     advertisementElement.querySelector('.popup__text--time').textContent = `Заезд после ${checkin}, выезд до ${checkouts}`;
     advertisementElement.querySelector('.popup__description').textContent = description;

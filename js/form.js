@@ -6,6 +6,7 @@ const checkInInput = adForm.querySelector('#timein');
 const checkOutInput = adForm.querySelector('#timeout');
 const roomNumberInput = adForm.querySelector('#room_number');
 const capacityInput = adForm.querySelector('#capacity');
+const priceSlider = adForm.querySelector('.ad-form__slider');
 
 const MIN_PRICE_OF_HOUSING = {
   'palace': 10000,
@@ -36,6 +37,7 @@ const disableForm = (form) => {
 const resetAdForm = () => {
   priceInput.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
   capacityInput.value = '1';
+  //pristine.reset();
 };
 
 //функция для активации формы пока закомментирована, чтобы линтер не ругался на неиспользованную функцию в коде
@@ -64,7 +66,7 @@ const getCapacityErrorMessage = () => `Размещение в ${roomNumberInput
 const onSyncValidCapacityRoom = () => pristine.validate([roomNumberInput, capacityInput]);
 //функции синхронизации для чекина и чекаута для передачи по ссылке при изменении значения одного из полей
 const onCheckInInputChange = () => {
-  checkOutInput.value = checkInInput.value;
+  checkInInput.value = checkOutInput.value;
 };
 
 const onCheckOutInputChange = () => {
@@ -93,6 +95,45 @@ const onAdFormSubmit = (evt) => {
   }
 };
 
+//инициализируем слайдер и настраиваем его
+noUiSlider.create(priceSlider, {
+  range: {
+    min: 0,
+    max: 100000,
+  },
+  start: MIN_PRICE_OF_HOUSING[housingTypeInput.value],
+  step: 1,
+  connect: 'lower',
+  format: {
+    to: function (value) {
+      return value.toFixed(0);
+    },
+    from: function (value) {
+      return parseFloat(value);
+    },
+  },
+});
+
+priceSlider.noUiSlider.on('update', (values, handle) => {
+  priceInput.value = values[handle];
+});
+
+priceInput.addEventListener('change', function () {
+  priceSlider.noUiSlider.set(this.value);
+});
+
+housingTypeInput.addEventListener('change',  () => {
+  priceSlider.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInput.value]);
+});
+
+const makeSliderDisabled = () => {
+  priceSlider.setAttribute('disabled', 'disabled');
+};
+
+const makeSliderEnabled = () => {
+  priceSlider.removeAttribute('disabled');
+};
+
 //функция-сборка всех функций связянных с валидацией и отправкой формы
 const getFormValidation = () => {
   adForm.addEventListener('submit', onAdFormSubmit);
@@ -100,8 +141,8 @@ const getFormValidation = () => {
   pristine.addValidator(capacityInput, validateRoomNumberInput, getCapacityErrorMessage);
   pristine.addValidator(roomNumberInput, validateRoomNumberInput, getCapacityErrorMessage);
   housingTypeInput.addEventListener('change', onHousingTypeInputChange);
-  checkInInput.addEventListener('change', onCheckInInputChange);
   checkInInput.addEventListener('change', onCheckOutInputChange);
+  checkOutInput.addEventListener('change', onCheckInInputChange);
   roomNumberInput.addEventListener('change', onSyncValidCapacityRoom);
   capacityInput.addEventListener('change', onSyncValidCapacityRoom);
 };
