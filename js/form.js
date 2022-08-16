@@ -40,15 +40,15 @@ const resetAdForm = () => {
   //pristine.reset();
 };
 
-//функция для активации формы пока закомментирована, чтобы линтер не ругался на неиспользованную функцию в коде
-/*const enableForm = (form) => {
+//функция для активации формы
+const enableForm = (form) => {
   form.classList.remove(`${form.classList[0]}--disabled`);
 
   const formChildren = Array.from(form.children);
   formChildren.forEach((element) => {
     element.removeAttribute('disabled');
   });
-};*/
+};
 
 //инициализируем библиотеку Пристин, добавляем кастомные классы
 const pristine = new Pristine(adForm, {
@@ -153,4 +153,5 @@ getFormValidation();
 disableForm(mapFilters);
 resetAdForm();
 
+export {enableForm, mapFilters, adForm, resetAdForm};
 

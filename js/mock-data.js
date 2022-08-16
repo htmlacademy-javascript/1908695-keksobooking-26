@@ -98,7 +98,7 @@ const createAdvertisement = () => {
       rooms: getRandomArrayElement(ROOMS),
       guests: getRandomArrayElement(GUESTS),
       checkin: getRandomArrayElement(CHECKINS),
-      checkouts: getRandomArrayElement(CHECKOUTS),
+      checkout: getRandomArrayElement(CHECKOUTS),
       features: getMockDataArray(FEATURES_ELEMENTS, 6),
       description: getRandomArrayUniqueElement(DESCRIPTIONS),
       photos: getMockDataArray(PHOTOS_ELEMENTS, 3),
