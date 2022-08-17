@@ -127,13 +127,13 @@ housingTypeInput.addEventListener('change',  () => {
   priceSlider.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInput.value]);
 });
 
-const makeSliderDisabled = () => {
+/*const makeSliderDisabled = () => {
   priceSlider.setAttribute('disabled', 'disabled');
 };
 
 const makeSliderEnabled = () => {
   priceSlider.removeAttribute('disabled');
-};
+};*/
 
 //функция-сборка всех функций связянных с валидацией и отправкой формы
 const getFormValidation = () => {

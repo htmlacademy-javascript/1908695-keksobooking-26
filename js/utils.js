@@ -32,9 +32,9 @@ function getRandomPositiveFloat (minValue, maxValue, digitsAfterPoint) {
 const getRandomArrayElement = (elements) => elements[getRandomPositiveInteger(0, elements.length - 1)];
 
 //функция возвращает массив случайных неповторяющихся элементов в заданном количестве
-function getRandomArrayElements (array, quantity) {
+/*function getRandomArrayElements (array, quantity) {
   return array.slice().sort(() => 0.5 - Math.random()).slice(0, quantity);
-}
+}*/
 //функция для получения случайного неповторяющегося элемента
 const getRandomArrayUniqueElement = (elements) => {
   const elementsCopy = elements.slice();
@@ -42,4 +42,4 @@ const getRandomArrayUniqueElement = (elements) => {
   elements.splice(elements.indexOf(randomElement), 1);
   return randomElement;
 };
-export {getRandomArrayElement, getRandomPositiveInteger, getRandomArrayElements, getRandomPositiveFloat, getRandomArrayUniqueElement};
+export {getRandomArrayElement, getRandomPositiveInteger, getRandomPositiveFloat, getRandomArrayUniqueElement};
