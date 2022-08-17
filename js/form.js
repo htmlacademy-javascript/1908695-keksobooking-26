@@ -33,13 +33,6 @@ const disableForm = (form) => {
   });
 };
 
-//функция для очистки формы и возвращения к первоначальным значениям
-const resetAdForm = () => {
-  priceInput.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
-  capacityInput.value = '1';
-  //pristine.reset();
-};
-
 //функция для активации формы
 const enableForm = (form) => {
   form.classList.remove(`${form.classList[0]}--disabled`);
@@ -60,10 +53,18 @@ const pristine = new Pristine(adForm, {
   errorTextTag: 'div'
 });
 
+//функция для очистки формы и возвращения к первоначальным значениям
+const resetAdForm = () => {
+  priceInput.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
+  capacityInput.value = '1';
+  pristine.reset();
+};
+
 //функции для валидации полей с количеством комнат и количеством гостей и генерация сообщения об ошибке
 const validateRoomNumberInput = () => ROOM_CAPACITY[roomNumberInput.value].includes(capacityInput.value);
 const getCapacityErrorMessage = () => `Размещение в ${roomNumberInput.value} ${roomNumberInput.value === '1' ? 'комнате' : 'комнатах'} для ${capacityInput.value} ${capacityInput.value === '1' ? 'гостя' : 'гостей'} невозможно`;
 const onSyncValidCapacityRoom = () => pristine.validate([roomNumberInput, capacityInput]);
+
 //функции синхронизации для чекина и чекаута для передачи по ссылке при изменении значения одного из полей
 const onCheckInInputChange = () => {
   checkInInput.value = checkOutInput.value;
@@ -153,5 +154,5 @@ getFormValidation();
 disableForm(mapFilters);
 resetAdForm();
 
-export {enableForm, mapFilters, adForm, resetAdForm};
+export {enableForm, mapFilters, adForm, resetAdForm, disableForm};
 

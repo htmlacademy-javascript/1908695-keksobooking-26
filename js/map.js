@@ -1,4 +1,4 @@
-import {enableForm, mapFilters, adForm, resetAdForm} from './form.js';
+import {enableForm, mapFilters, adForm, resetAdForm, disableForm} from './form.js';
 import {getAdvertisements} from './create-advertisements.js';
 import {createAdvertisements} from './mock-data.js';
 
@@ -39,7 +39,10 @@ L.tileLayer(
     attribution: ATTRIBUTION,
   },
 ).addTo(map);
+//создаем слой для отрисовки маркеров и добавляем на карту
 const markerGroup = L.layerGroup().addTo(map);
+
+//рисуем маркер и добавляем попап, куда передаем данные с объектом объявления
 const createSecondaryMarker = function (adData) {
   const marker = L.marker({
     lat: adData.location.lat,
@@ -54,15 +57,26 @@ const createSecondaryMarker = function (adData) {
     .bindPopup(getAdvertisements(adData));
 };
 
-advertsData.forEach((advert) => {
-  createSecondaryMarker(advert);
-});
+//создаем маркеры на основе данных полученных с сервера (пока моковые)
+const createAdvertsMarkers  = (data) => {
+  data.forEach((dataElement) => {
+    createSecondaryMarker(dataElement);
+  });
+};
+
+createAdvertsMarkers(advertsData);
+
+//состояние карты по умолчанию
 function onDefaultMap () {
   addressInput.value = `${DEFAULT_LAT_LNG.lat} ${DEFAULT_LAT_LNG.lng}`;
-  enableForm(adForm);
-  enableForm(mapFilters);
+  disableForm(adForm);
+  disableForm(mapFilters);
+  setTimeout (() => {
+    enableForm(adForm);
+    enableForm(mapFilters);
+  }, 2000);
 }
-
+//создаем маркер для выбора адреса в объявлении
 const mainPinMarker = L.marker(
   {
     lat:DEFAULT_LAT_LNG.lat,
@@ -74,22 +88,26 @@ const mainPinMarker = L.marker(
   },
 );
 
+//добавляем маркер на карту
 mainPinMarker.addTo(map);
 
+//отслеживаем координаты маркера и записывем их в значение поля с адресом
 mainPinMarker.on('moveend', (evt) => {
   const { lat, lng } = evt.target.getLatLng();
   addressInput.value = `${lat.toFixed(PRECISE_NUMBER)}, ${lng.toFixed(PRECISE_NUMBER)}`;
   map.setView(evt.target.getLatLng(), ZOOM);
 });
 
+//сброс всех элементов к начальному состоянию
 const resetAllElements = () => {
   mainPinMarker.setLatLng({
     lat: DEFAULT_LAT_LNG.lat,
     lng: DEFAULT_LAT_LNG.lng,
   });
   map.setView(DEFAULT_LAT_LNG, ZOOM);
-  resetAdForm();
   map.closePopup();
   mapFilters.reset();
+  onDefaultMap();
+  resetAdForm();
 };
 resetButton.addEventListener('click', resetAllElements);
