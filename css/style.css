@@ -32,6 +32,10 @@
           box-sizing: border-box;
 }
 
+div.pristine-error {
+  color: darkred;
+  margin: 5px 0;
+}
 .content-box-component {
   -webkit-box-sizing: content-box;
           box-sizing: content-box;

@@ -6,6 +6,7 @@ const checkInInput = adForm.querySelector('#timein');
 const checkOutInput = adForm.querySelector('#timeout');
 const roomNumberInput = adForm.querySelector('#room_number');
 const capacityInput = adForm.querySelector('#capacity');
+const priceSlider = adForm.querySelector('.ad-form__slider');
 
 const MIN_PRICE_OF_HOUSING = {
   'palace': 10000,
@@ -32,21 +33,15 @@ const disableForm = (form) => {
   });
 };
 
-//функция для очистки формы и возвращения к первоначальным значениям
-const resetAdForm = () => {
-  priceInput.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
-  capacityInput.value = '1';
-};
-
-//функция для активации формы пока закомментирована, чтобы линтер не ругался на неиспользованную функцию в коде
-/*const enableForm = (form) => {
+//функция для активации формы
+const enableForm = (form) => {
   form.classList.remove(`${form.classList[0]}--disabled`);
 
   const formChildren = Array.from(form.children);
   formChildren.forEach((element) => {
     element.removeAttribute('disabled');
   });
-};*/
+};
 
 //инициализируем библиотеку Пристин, добавляем кастомные классы
 const pristine = new Pristine(adForm, {
@@ -58,13 +53,21 @@ const pristine = new Pristine(adForm, {
   errorTextTag: 'div'
 });
 
+//функция для очистки формы и возвращения к первоначальным значениям
+const resetAdForm = () => {
+  priceInput.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
+  capacityInput.value = '1';
+  pristine.reset();
+};
+
 //функции для валидации полей с количеством комнат и количеством гостей и генерация сообщения об ошибке
 const validateRoomNumberInput = () => ROOM_CAPACITY[roomNumberInput.value].includes(capacityInput.value);
 const getCapacityErrorMessage = () => `Размещение в ${roomNumberInput.value} ${roomNumberInput.value === '1' ? 'комнате' : 'комнатах'} для ${capacityInput.value} ${capacityInput.value === '1' ? 'гостя' : 'гостей'} невозможно`;
+const onSyncValidCapacityRoom = () => pristine.validate([roomNumberInput, capacityInput]);
 
 //функции синхронизации для чекина и чекаута для передачи по ссылке при изменении значения одного из полей
 const onCheckInInputChange = () => {
-  checkOutInput.value = checkInInput.value;
+  checkInInput.value = checkOutInput.value;
 };
 
 const onCheckOutInputChange = () => {
@@ -93,6 +96,45 @@ const onAdFormSubmit = (evt) => {
   }
 };
 
+//инициализируем слайдер и настраиваем его
+noUiSlider.create(priceSlider, {
+  range: {
+    min: 0,
+    max: 100000,
+  },
+  start: MIN_PRICE_OF_HOUSING[housingTypeInput.value],
+  step: 1,
+  connect: 'lower',
+  format: {
+    to: function (value) {
+      return value.toFixed(0);
+    },
+    from: function (value) {
+      return parseFloat(value);
+    },
+  },
+});
+
+priceSlider.noUiSlider.on('update', (values, handle) => {
+  priceInput.value = values[handle];
+});
+
+priceInput.addEventListener('change', function () {
+  priceSlider.noUiSlider.set(this.value);
+});
+
+housingTypeInput.addEventListener('change',  () => {
+  priceSlider.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInput.value]);
+});
+
+/*const makeSliderDisabled = () => {
+  priceSlider.setAttribute('disabled', 'disabled');
+};
+
+const makeSliderEnabled = () => {
+  priceSlider.removeAttribute('disabled');
+};*/
+
 //функция-сборка всех функций связянных с валидацией и отправкой формы
 const getFormValidation = () => {
   adForm.addEventListener('submit', onAdFormSubmit);
@@ -100,8 +142,10 @@ const getFormValidation = () => {
   pristine.addValidator(capacityInput, validateRoomNumberInput, getCapacityErrorMessage);
   pristine.addValidator(roomNumberInput, validateRoomNumberInput, getCapacityErrorMessage);
   housingTypeInput.addEventListener('change', onHousingTypeInputChange);
-  checkInInput.addEventListener('change', onCheckInInputChange);
   checkInInput.addEventListener('change', onCheckOutInputChange);
+  checkOutInput.addEventListener('change', onCheckInInputChange);
+  roomNumberInput.addEventListener('change', onSyncValidCapacityRoom);
+  capacityInput.addEventListener('change', onSyncValidCapacityRoom);
 };
 
 //функции ниже потом внесу в другие функции когда под них появится логика
@@ -110,4 +154,5 @@ getFormValidation();
 disableForm(mapFilters);
 resetAdForm();
 
+export {enableForm, mapFilters, adForm, resetAdForm, disableForm};
 

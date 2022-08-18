@@ -1,8 +1,6 @@
-import  {createAdvertisements} from './mock-data.js';
-
 const IMG_WIDTH = 45;
 const IMG_HEIGHT = 40;
-const housingTypes = {
+const housingType = {
   flat : 'Квартира',
   bungalow: 'Бунгало',
   house: 'Дом',
@@ -23,22 +21,6 @@ const OFFER_KEYS = {
   description: 'description',
   photos: 'photos',
 };
-
-const mapCanvas = document.querySelector('#map-canvas');
-const advertisementTemplate = document.querySelector('#card').content.querySelector('article.popup');
-
-const advertisements = createAdvertisements();
-
-const advertisementsFragment = document.createDocumentFragment();
-
-const checkDataPresentation = (object, objectKeys) => {
-  Object.keys(objectKeys).forEach((key) => {
-    if (!key) {
-      object.querySelector(`.popup__${OFFER_KEYS[key]}`).classList.add('hidden');
-    }
-  });
-};
-
 const createImage = (objectKey) => {
   const newImage = document.createElement('img');
   newImage.classList.add('popup__photo');
@@ -49,38 +31,49 @@ const createImage = (objectKey) => {
   return newImage;
 };
 
-const getAdvertisements = () => {
-  mapCanvas.innerHTML = '';
-  advertisements.forEach(({author: {avatar}, offer: {title, address,price, type, rooms, guests, checkin, checkouts, features, description, photos}}) => {
-    const advertisementElement = advertisementTemplate.cloneNode(true);
-    const popupPhotos = advertisementElement.querySelector('.popup__photos');
-    const popupPhoto = advertisementElement.querySelector('.popup__photo');
-    const popupFeatureItems = advertisementElement.querySelectorAll('.popup__feature');
+const advertisementTemplate = document.querySelector('#card').content.querySelector('article.popup');
 
-    checkDataPresentation(advertisementElement, {title, address,price, type, rooms, guests, checkin, checkouts, features, description, photos});
-    advertisementElement.querySelector('.popup__avatar').src = avatar;
-    advertisementElement.querySelector('.popup__title').textContent = title;
-    advertisementElement.querySelector('.popup__text--address').textContent = address;
-    advertisementElement.querySelector('.popup__text--price').firstChild.data = price;
-    advertisementElement.querySelector('.popup__type').textContent = housingTypes[type];
-    advertisementElement.querySelector('.popup__text--capacity').textContent = `${rooms} комнаты для ${guests} гостей`;
-    advertisementElement.querySelector('.popup__text--time').textContent = `Заезд после ${checkin}, выезд до ${checkouts}`;
-    advertisementElement.querySelector('.popup__description').textContent = description;
-    for (let i = 0; i < photos.length; i++) {
-      popupPhotos.append(createImage(photos[i]));
+const getAdvertisements = (dataList) => {
+  const advertisementElement = advertisementTemplate.cloneNode(true);
+  const popupFeatureItems = advertisementElement.querySelectorAll('.popup__feature');
+  const popupPhotoList = advertisementElement.querySelector('.popup__photos');
+  const popupPhotos = popupPhotoList.querySelector('.popup__photo');
+
+  Object.keys(dataList.offer).forEach((key) => {
+    if (!key) {
+      advertisementElement.querySelector(`.popup__${OFFER_KEYS[key]}`).classList.add('hidden');
     }
-    popupPhoto.remove();
-    const modifiers = features.map((feature) => `popup__feature--${feature}`);
-    popupFeatureItems.forEach((popupFeatureItem) => {
-      const modifier = popupFeatureItem.classList[1];
-      if (!modifiers.includes(modifier)) {
-        popupFeatureItem.remove();
-      }
-    });
-
-    advertisementsFragment.append(advertisementElement);
   });
-  mapCanvas.append(advertisementsFragment.firstElementChild);
+
+  advertisementElement.querySelector('.popup__title').textContent = dataList.offer.title;
+  advertisementElement.querySelector('.popup__text--address').textContent = dataList.offer.address;
+  advertisementElement.querySelector('.popup__text--price').firstChild.data = dataList.offer.price;
+  advertisementElement.querySelector('.popup__type').textContent = housingType[dataList.offer.type];
+  advertisementElement.querySelector('.popup__text--capacity').textContent = `${dataList.offer.rooms} комнаты для ${dataList.offer.guests} гостей`;
+  advertisementElement.querySelector('.popup__text--time').textContent = `Заезд после ${dataList.offer.checkin}, выезд до ${dataList.offer.checkout}`;
+  advertisementElement.querySelector('.popup__description').textContent = dataList.offer.description;
+  const modifiers = dataList.offer.features.map((feature) => `popup__feature--${feature}`);
+  popupFeatureItems.forEach((popupFeatureItem) => {
+    const modifier = popupFeatureItem.classList[1];
+    if (!modifiers.includes(modifier)) {
+      popupFeatureItem.remove();
+    }
+  });
+
+  if (dataList.offer.photos) {
+    for (let i = 0; i < dataList.offer.photos.length; i++) {
+      popupPhotoList.appendChild(createImage(dataList.offer.photos[i]));
+    }
+  }
+  popupPhotos.remove();
+
+  if (!dataList.author.avatar) {
+    advertisementElement.querySelector('.popup__avatar').classList.add('hidden');
+  }
+  advertisementElement.querySelector('.popup__avatar').src = dataList.author.avatar;
+  return advertisementElement;
+
 };
+
 export {getAdvertisements};
 
