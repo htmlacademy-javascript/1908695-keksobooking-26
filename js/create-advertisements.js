@@ -31,7 +31,7 @@ const createImage = (objectKey) => {
   return newImage;
 };
 
-const advertisementTemplate = document.querySelector('#card').content.querySelector('article.popup');
+const advertisementTemplate = document.querySelector('#card').content.querySelector('.popup');
 
 const getAdvertisements = (dataList) => {
   const advertisementElement = advertisementTemplate.cloneNode(true);
@@ -59,11 +59,8 @@ const getAdvertisements = (dataList) => {
       popupFeatureItem.remove();
     }
   });
-
   if (dataList.offer.photos) {
-    for (let i = 0; i < dataList.offer.photos.length; i++) {
-      popupPhotoList.appendChild(createImage(dataList.offer.photos[i]));
-    }
+    dataList.offer.photos.forEach((photo) => popupPhotoList.appendChild(createImage(photo)));
   }
   popupPhotos.remove();
 

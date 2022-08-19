@@ -3,8 +3,8 @@ import {getAdvertisements} from './create-advertisements.js';
 import {createAdvertisements} from './mock-data.js';
 
 
-const addressInput = document.querySelector('#address');
-const resetButton = document.querySelector('.ad-form__reset');
+const addressInputElement = document.querySelector('#address');
+const resetButtonElement = document.querySelector('.ad-form__reset');
 const advertsData = createAdvertisements();
 
 const PRECISE_NUMBER = 5;
@@ -15,6 +15,7 @@ const DEFAULT_LAT_LNG = {
 };
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+let map = null;
 
 const mainPinIcon = L.icon({
   iconUrl: 'img/main-pin.svg',
@@ -27,23 +28,50 @@ const secondaryPinIcon = L.icon({
   iconAnchor: [20, 40],
 });
 
-// Создание карты
-const map = L.map('map-canvas')
-  .on('load', onDefaultMap)
-  .setView(DEFAULT_LAT_LNG, ZOOM);
-
-//добавляем тайл с отрисовкой самой карты
-L.tileLayer(
-  TILE_LAYER,
+//создаем маркер для выбора адреса в объявлении
+const mainPinMarker = L.marker(
   {
-    attribution: ATTRIBUTION,
+    lat:DEFAULT_LAT_LNG.lat,
+    lng: DEFAULT_LAT_LNG.lng,
   },
-).addTo(map);
+  {
+    draggable: true,
+    icon: mainPinIcon,
+  },
+);
+
+//функция для отрисовки состояния карты по умолчанию
+const onDefaultMap = () => {
+  addressInputElement.value = `${DEFAULT_LAT_LNG.lat} ${DEFAULT_LAT_LNG.lng}`;
+  disableForm(adForm);
+  disableForm(mapFilters);
+  setTimeout (() => {
+    enableForm(adForm);
+    enableForm(mapFilters);
+  }, 2000);
+};
+
+//создаем карту, добавляем тайл и главный маркет
+const initMap = () => {
+  map = L.map('map-canvas')
+    .on('load', onDefaultMap)
+    .setView(DEFAULT_LAT_LNG, ZOOM);
+  L.tileLayer(
+    TILE_LAYER,
+    {
+      attribution: ATTRIBUTION,
+    },
+  ).addTo(map);
+  mainPinMarker.addTo(map);
+};
+
+initMap();
+
 //создаем слой для отрисовки маркеров и добавляем на карту
 const markerGroup = L.layerGroup().addTo(map);
 
 //рисуем маркер и добавляем попап, куда передаем данные с объектом объявления
-const createSecondaryMarker = function (adData) {
+const createSecondaryMarker =  (adData) => {
   const marker = L.marker({
     lat: adData.location.lat,
     lng: adData.location.lng,
@@ -66,35 +94,10 @@ const createAdvertsMarkers  = (data) => {
 
 createAdvertsMarkers(advertsData);
 
-//состояние карты по умолчанию
-function onDefaultMap () {
-  addressInput.value = `${DEFAULT_LAT_LNG.lat} ${DEFAULT_LAT_LNG.lng}`;
-  disableForm(adForm);
-  disableForm(mapFilters);
-  setTimeout (() => {
-    enableForm(adForm);
-    enableForm(mapFilters);
-  }, 2000);
-}
-//создаем маркер для выбора адреса в объявлении
-const mainPinMarker = L.marker(
-  {
-    lat:DEFAULT_LAT_LNG.lat,
-    lng: DEFAULT_LAT_LNG.lng,
-  },
-  {
-    draggable: true,
-    icon: mainPinIcon,
-  },
-);
-
-//добавляем маркер на карту
-mainPinMarker.addTo(map);
-
 //отслеживаем координаты маркера и записывем их в значение поля с адресом
 mainPinMarker.on('moveend', (evt) => {
   const { lat, lng } = evt.target.getLatLng();
-  addressInput.value = `${lat.toFixed(PRECISE_NUMBER)}, ${lng.toFixed(PRECISE_NUMBER)}`;
+  addressInputElement.value = `${lat.toFixed(PRECISE_NUMBER)}, ${lng.toFixed(PRECISE_NUMBER)}`;
   map.setView(evt.target.getLatLng(), ZOOM);
 });
 
@@ -108,6 +111,7 @@ const resetAllElements = () => {
   map.closePopup();
   mapFilters.reset();
   onDefaultMap();
+  adForm.reset();
   resetAdForm();
 };
-resetButton.addEventListener('click', resetAllElements);
+resetButtonElement.addEventListener('click', resetAllElements);
