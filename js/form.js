@@ -156,7 +156,7 @@ const resetAdForm = () => {
 //функции ниже потом внесу в другие функции когда под них появится логика
 getFormValidation();
 //disableForm(adForm);
-disableForm(mapFilters);
+//disableForm(mapFilters);
 
 export {enableForm, mapFilters, adForm, resetAdForm, disableForm};
 

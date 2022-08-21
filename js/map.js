@@ -1,12 +1,12 @@
-import {enableForm, mapFilters, adForm, resetAdForm, disableForm} from './form.js';
+import {enableForm, mapFilters, adForm, resetAdForm} from './form.js';
 import {getAdvertisements} from './create-advertisements.js';
-import {createAdvertisements} from './mock-data.js';
-
+//import {createAdvertisements} from './mock-data.js';
+import {getData} from './api.js';
 
 const addressInputElement = document.querySelector('#address');
 const resetButtonElement = document.querySelector('.ad-form__reset');
-const advertsData = createAdvertisements();
-
+//const advertsData = createAdvertisements();
+const ADVERTS_AMOUNT = 10;
 const PRECISE_NUMBER = 5;
 const ZOOM = 10;
 const DEFAULT_LAT_LNG = {
@@ -39,17 +39,6 @@ const mainPinMarker = L.marker(
     icon: mainPinIcon,
   },
 );
-
-//функция для отрисовки состояния карты по умолчанию
-const onDefaultMap = () => {
-  addressInputElement.value = `${DEFAULT_LAT_LNG.lat} ${DEFAULT_LAT_LNG.lng}`;
-  disableForm(adForm);
-  disableForm(mapFilters);
-  setTimeout (() => {
-    enableForm(adForm);
-    enableForm(mapFilters);
-  }, 2000);
-};
 
 //создаем карту, добавляем тайл и главный маркет
 const initMap = () => {
@@ -92,8 +81,18 @@ const createAdvertsMarkers  = (data) => {
   });
 };
 
-createAdvertsMarkers(advertsData);
-
+//createAdvertsMarkers(advertsData);
+//функция для отрисовки состояния карты по умолчанию
+function onDefaultMap  () {
+  addressInputElement.value = `${DEFAULT_LAT_LNG.lat} ${DEFAULT_LAT_LNG.lng}`;
+  getData(
+    (dataList) => {
+      createAdvertsMarkers(dataList.slice(0, ADVERTS_AMOUNT));
+      enableForm(adForm);
+      enableForm(mapFilters);
+    },
+  );
+}
 //отслеживаем координаты маркера и записывем их в значение поля с адресом
 mainPinMarker.on('moveend', (evt) => {
   const { lat, lng } = evt.target.getLatLng();
@@ -115,3 +114,5 @@ const resetAllElements = () => {
   resetAdForm();
 };
 resetButtonElement.addEventListener('click', resetAllElements);
+
+export {createAdvertsMarkers};

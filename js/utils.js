@@ -1,3 +1,23 @@
+const ALERT_SHOW_TIME = 5000;
+
+const showAlert = (message) => {
+  const alertContainer = document.createElement('div');
+  alertContainer.style.zIndex = '100';
+  alertContainer.style.position = 'fixed';
+  alertContainer.style.left = '0';
+  alertContainer.style.top = '0';
+  alertContainer.style.right = '0';
+  alertContainer.style.padding = '10px 5px';
+  alertContainer.style.fontSize = '30px';
+  alertContainer.style.textAlign = 'center';
+  alertContainer.style.backgroundColor = 'tomato';
+  alertContainer.textContent = message;
+  document.body.append(alertContainer);
+
+  setTimeout(() => {
+    alertContainer.remove();
+  }, ALERT_SHOW_TIME);
+};
 //функция для возврата случайного целого числа в заданном диаипазоне
 const getRandomPositiveInteger = (minValue, maxValue) => {
   const lower = Math.ceil(Math.min(Math.abs(minValue), Math.abs(maxValue)));
@@ -42,4 +62,4 @@ const getRandomArrayUniqueElement = (elements) => {
   elements.splice(elements.indexOf(randomElement), 1);
   return randomElement;
 };
-export {getRandomArrayElement, getRandomPositiveInteger, getRandomPositiveFloat, getRandomArrayUniqueElement};
+export {getRandomArrayElement, getRandomPositiveInteger, getRandomPositiveFloat, getRandomArrayUniqueElement, showAlert};

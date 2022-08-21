@@ -1,14 +1,16 @@
+import {showAlert} from './utils.js';
+import {mapFilters, adForm, disableForm} from './form.js';
 const URL = 'https://26.javascript.pages.academy/keksobooking/data';
 
-const getData = (onSuccess, onFail) => {
+const getData = (onSuccess) => {
   fetch(URL)
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        onFail();
-      }
+    .then((response) => response.json())
+    .then((serverData) => onSuccess(serverData))
+    .catch(() => {
+      showAlert('данные с сервера не получены');
+      disableForm(adForm);
+      disableForm(mapFilters);
     });
 };
-getData();
 export {getData};
+
