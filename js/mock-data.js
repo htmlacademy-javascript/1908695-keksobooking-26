@@ -57,11 +57,7 @@ const FEATURES_ELEMENTS = [
   'conditioner'
 ];
 
-const PHOTOS_ELEMENTS = [
-  'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/duonguyen-8LrGtIxxa4w.jpg',
-  'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/brandon-hoogenboom-SNxQGWxZQi0.jpg',
-  'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg'
-];
+const PHOTOS_ELEMENTS = [];
 
 const getMockDataArray = (array, value) => {
   const newArray= [];
@@ -84,7 +80,7 @@ const createAdvertisement = () => {
   };
   return {
     author: {
-      avatar: getRandomArrayUniqueElement(AVATARS),
+      avatar: '',
     },
     location: {
       lat: Number(`${location['lat']}`),
@@ -99,9 +95,9 @@ const createAdvertisement = () => {
       guests: getRandomArrayElement(GUESTS),
       checkin: getRandomArrayElement(CHECKINS),
       checkout: getRandomArrayElement(CHECKOUTS),
-      features: getMockDataArray(FEATURES_ELEMENTS, 6),
-      description: getRandomArrayUniqueElement(DESCRIPTIONS),
-      photos: getMockDataArray(PHOTOS_ELEMENTS, 3),
+      features: '',
+      description: '',
+      photos: '',
     },
   };
 };

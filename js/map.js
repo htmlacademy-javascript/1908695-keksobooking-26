@@ -1,11 +1,10 @@
-import {enableForm, mapFilters, adForm, resetAdForm} from './form.js';
+import {enableForm, mapFiltersElement, adFormElement, resetAdForm} from './form.js';
 import {getAdvertisements} from './create-advertisements.js';
-//import {createAdvertisements} from './mock-data.js';
 import {getData} from './api.js';
 
 const addressInputElement = document.querySelector('#address');
 const resetButtonElement = document.querySelector('.ad-form__reset');
-//const advertsData = createAdvertisements();
+
 const ADVERTS_AMOUNT = 10;
 const PRECISE_NUMBER = 5;
 const ZOOM = 10;
@@ -81,15 +80,14 @@ const createAdvertsMarkers  = (data) => {
   });
 };
 
-//createAdvertsMarkers(advertsData);
 //функция для отрисовки состояния карты по умолчанию
 function onDefaultMap  () {
   addressInputElement.value = `${DEFAULT_LAT_LNG.lat} ${DEFAULT_LAT_LNG.lng}`;
   getData(
     (dataList) => {
       createAdvertsMarkers(dataList.slice(0, ADVERTS_AMOUNT));
-      enableForm(adForm);
-      enableForm(mapFilters);
+      enableForm(adFormElement);
+      enableForm(mapFiltersElement);
     },
   );
 }
@@ -108,9 +106,9 @@ const resetAllElements = () => {
   });
   map.setView(DEFAULT_LAT_LNG, ZOOM);
   map.closePopup();
-  mapFilters.reset();
+  mapFiltersElement.reset();
   onDefaultMap();
-  adForm.reset();
+  adFormElement.reset();
   resetAdForm();
 };
 resetButtonElement.addEventListener('click', resetAllElements);

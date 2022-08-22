@@ -1,12 +1,51 @@
-const adForm = document.querySelector('.ad-form');
-const mapFilters = document.querySelector('.map__filters');
-const housingTypeInputElement = adForm.querySelector('#type');
-const priceInputElement = adForm.querySelector('#price');
-const checkInInputElement = adForm.querySelector('#timein');
-const checkOutInputElement = adForm.querySelector('#timeout');
-const roomNumberInputElement = adForm.querySelector('#room_number');
-const capacityInputElement = adForm.querySelector('#capacity');
-const priceSliderElement = adForm.querySelector('.ad-form__slider');
+import {sendData} from './api.js';
+
+const adFormElement = document.querySelector('.ad-form');
+const mapFiltersElement = document.querySelector('.map__filters');
+const housingTypeInputElement = adFormElement.querySelector('#type');
+const priceInputElement = adFormElement.querySelector('#price');
+const checkInInputElement = adFormElement.querySelector('#timein');
+const checkOutInputElement = adFormElement.querySelector('#timeout');
+const roomNumberInputElement = adFormElement.querySelector('#room_number');
+const capacityInputElement = adFormElement.querySelector('#capacity');
+const priceSliderElement = adFormElement.querySelector('.ad-form__slider');
+const successMessageElement = document.querySelector('#success').content;
+const errorMessageElement = document.querySelector('#error').content;
+const submitButton = adFormElement.querySelector('.ad-form__submit');
+
+const onSuccessMessageExit = (evt) => {
+  evt.preventDefault();
+  if (evt.key === 'Escape' || !evt.target.closest('.success__message')) {
+    document.querySelector('.success').remove();
+  }
+  document.removeEventListener('keydown', onSuccessMessageExit);
+  document.removeEventListener('click', onSuccessMessageExit);
+};
+const getSuccessMessage = () => {
+  const successPopUp = successMessageElement.cloneNode(true);
+  document.body.append(successPopUp);
+  document.addEventListener('keydown', onSuccessMessageExit);
+  document.addEventListener('click', onSuccessMessageExit);
+};
+
+const onErrorMessageExit = (evt) => {
+  const errorPopUp = errorMessageElement.cloneNode(true);
+  evt.preventDefault();
+  if (evt.key === 'Escape' || !evt.target.closest('.error__message') || evt.target.closest('.error__button')) {
+    document.querySelector('.error').remove();
+  }
+  document.removeEventListener('keydown', onErrorMessageExit);
+  document.removeEventListener('click', onErrorMessageExit);
+  errorPopUp.querySelector('.error__button').removeEventListener('click', onErrorMessageExit);
+};
+
+const getErrorMessage = () => {
+  const errorPopUp = errorMessageElement.cloneNode(true);
+  document.body.append(errorPopUp);
+  document.addEventListener('keydown', onErrorMessageExit);
+  document.addEventListener('click', onErrorMessageExit);
+  document.querySelector('.error__button').addEventListener('click', onErrorMessageExit);
+};
 
 const MIN_PRICE_OF_HOUSING = {
   'palace': 10000,
@@ -44,7 +83,7 @@ const enableForm = (form) => {
 };
 
 //инициализируем библиотеку Пристин, добавляем кастомные классы
-const pristine = new Pristine(adForm, {
+const pristine = new Pristine(adFormElement, {
   classTo: 'pristine-custom',
   errorClass: 'pristine-custom--invalid',
   successClass: 'pristine-custom--valid',
@@ -81,13 +120,41 @@ const onHousingTypeInputChange = () => {
   priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
 };
 
+// Блокируем кнопку при отправке формы
+const blockSubmitButton = () => {
+  submitButton.setAttribute('disabled', 'disabled');
+  submitButton.textContent = 'Отправляю...';
+};
+
+// Разблокируем кнопку
+const unblockSubmitButton = () => {
+  submitButton.removeAttribute('disabled');
+  submitButton.textContent = 'Опубликовать';
+};
+
+const onSubmitSendSuccess = () => {
+  getSuccessMessage();
+  unblockSubmitButton();
+  resetAdForm();
+};
+
+const onSubmitSendError = () => {
+  getErrorMessage();
+  unblockSubmitButton();
+};
 //функция обработки события отправки формы для передачи по ссылке
 const onAdFormSubmit = (evt) => {
+  evt.preventDefault();
   const isValid = pristine.validate();
-  if (!isValid) {
-    evt.preventDefault();
+
+  if (isValid) {
+    blockSubmitButton();
+    sendData(onSubmitSendSuccess, onSubmitSendError, new FormData(evt.target));
+  } else {
+    onSubmitSendError();
   }
 };
+
 
 //инициализируем слайдер и настраиваем его
 const initNoUiSlider = () => {
@@ -122,18 +189,10 @@ const initNoUiSlider = () => {
   });
 };
 
-/*const makeSliderDisabled = () => {
-  priceSlider.setAttribute('disabled', 'disabled');
-};
-
-const makeSliderEnabled = () => {
-  priceSlider.removeAttribute('disabled');
-};*/
-
 //функция-сборка всех функций связянных с валидацией и отправкой формы
 const getFormValidation = () => {
   initNoUiSlider();
-  adForm.addEventListener('submit', onAdFormSubmit);
+  adFormElement.addEventListener('submit', onAdFormSubmit);
   pristine.addValidator(priceInputElement, validatePriceInput, getPriceErrorMessage);
   pristine.addValidator(capacityInputElement, validateRoomNumberInput, getCapacityErrorMessage);
   pristine.addValidator(roomNumberInputElement, validateRoomNumberInput, getCapacityErrorMessage);
@@ -144,19 +203,17 @@ const getFormValidation = () => {
   capacityInputElement.addEventListener('change', onSyncValidCapacityRoom);
 };
 //функция для очистки формы и возвращения к первоначальным значениям
-const resetAdForm = () => {
+function resetAdForm () {
   //housingTypeInputElement.value = 'flat';
   priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
   capacityInputElement.value = '1';
   pristine.reset();
-  adForm.reset();
+  adFormElement.reset();
   priceSliderElement.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInputElement.value]);
-};
+}
 
 //функции ниже потом внесу в другие функции когда под них появится логика
 getFormValidation();
-//disableForm(adForm);
-//disableForm(mapFilters);
 
-export {enableForm, mapFilters, adForm, resetAdForm, disableForm};
+export {enableForm, mapFiltersElement, adFormElement, resetAdForm, disableForm};
 
