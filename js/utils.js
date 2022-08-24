@@ -1,5 +1,5 @@
 const ALERT_SHOW_TIME = 5000;
-const TIMEOUT_DELAY = 500;
+//const TIMEOUT_DELAY = 500;
 
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
@@ -20,7 +20,7 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 //функция для возврата случайного целого числа в заданном диаипазоне
-const getRandomPositiveInteger = (minValue, maxValue) => {
+/*const getRandomPositiveInteger = (minValue, maxValue) => {
   const lower = Math.ceil(Math.min(Math.abs(minValue), Math.abs(maxValue)));
   const upper = Math.floor(Math.max(Math.abs(minValue), Math.abs(maxValue)));
   const result = Math.random() * (upper - lower + 1) + lower;
@@ -57,7 +57,7 @@ const getRandomArrayElement = (elements) => elements[getRandomPositiveInteger(0,
   return array.slice().sort(() => 0.5 - Math.random()).slice(0, quantity);
 }*/
 //функция для получения случайного неповторяющегося элемента
-const getRandomArrayUniqueElement = (elements) => {
+/*const getRandomArrayUniqueElement = (elements) => {
   const elementsCopy = elements.slice();
   const randomElement = elementsCopy[getRandomPositiveInteger(0, elements.length-1)];
   elements.splice(elements.indexOf(randomElement), 1);
@@ -71,5 +71,5 @@ const debounce = (callback, timeoutDelay = TIMEOUT_DELAY) =>{
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
   };
-};
-export {getRandomArrayElement, getRandomPositiveInteger, getRandomPositiveFloat, getRandomArrayUniqueElement, showAlert, debounce};
+};*/
+export {showAlert};

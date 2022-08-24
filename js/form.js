@@ -205,7 +205,6 @@ const getFormValidation = () => {
 };
 //функция для очистки формы и возвращения к первоначальным значениям
 function resetAdForm () {
-  //housingTypeInputElement.value = 'flat';
   priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
   capacityInputElement.selectedIndex = 3;
   pristine.reset();
