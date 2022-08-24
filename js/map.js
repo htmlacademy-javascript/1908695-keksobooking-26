@@ -2,9 +2,6 @@ import {enableForm, mapFiltersElement, adFormElement, resetAdForm} from './form.
 import {getAdvertisements} from './create-advertisements.js';
 import {getData} from './api.js';
 
-const addressInputElement = document.querySelector('#address');
-const resetButtonElement = document.querySelector('.ad-form__reset');
-
 const ADVERTS_AMOUNT = 10;
 const PRECISE_NUMBER = 5;
 const ZOOM = 10;
@@ -14,6 +11,10 @@ const DEFAULT_LAT_LNG = {
 };
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+const addressInputElement = document.querySelector('#address');
+const resetButtonElement = document.querySelector('.ad-form__reset');
+
 let map = null;
 
 const mainPinIcon = L.icon({

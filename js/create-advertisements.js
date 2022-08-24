@@ -40,7 +40,6 @@ const getAdvertisements = (dataList) => {
   const popupPhotos = popupPhotoList.querySelector('.popup__photo');
 
   Object.keys(dataList.offer).forEach((key) => {
-    console.log(key);
     if (!key) {
       advertisementElement.querySelector(`.popup__${OFFER_KEYS[key]}`).remove();
     }
@@ -48,9 +47,10 @@ const getAdvertisements = (dataList) => {
 
   advertisementElement.querySelector('.popup__title').textContent = dataList.offer.title;
   advertisementElement.querySelector('.popup__text--address').textContent = dataList.offer.address;
-  advertisementElement.querySelector('.popup__text--price').firstChild.data = dataList.offer.price ? dataList.offer.price: '';
-  advertisementElement.querySelector('.popup__type').textContent = housingType[dataList.offer.type] ? housingType[dataList.offer.type]: '';
-  advertisementElement.querySelector('.popup__description').textContent = dataList.offer.description ? dataList.offer.description: '' ;
+  advertisementElement.querySelector('.popup__text--price').firstChild.data = dataList.offer.price;
+  advertisementElement.querySelector('.popup__type').textContent = housingType[dataList.offer.type];
+  advertisementElement.querySelector('.popup__description').textContent = dataList.offer.description;
+  advertisementElement.querySelector('.popup__text--time').textContent = `Заезд после ${dataList.offer.checkin  } выезд до ${dataList.offer.checkout}`;
   if (dataList.offer.features) {
     const modifiers = dataList.offer.features.map((feature) => `popup__feature--${feature}`);
     popupFeatureItems.forEach((popupFeatureItem) => {
@@ -61,17 +61,6 @@ const getAdvertisements = (dataList) => {
     });
   } else {
     advertisementElement.querySelector('.popup__features').remove();
-  }
-  if (dataList.offer.checkin && dataList.offer.checkout) {
-    advertisementElement.querySelector('.popup__text--time').textContent = `Заезд после ${dataList.offer.checkin  } выезд до ${dataList.offer.checkout}`;
-  } else {
-    advertisementElement.querySelector('.popup__text--time').remove();
-  }
-
-  if (dataList.offer.rooms && dataList.offer.guests) {
-    advertisementElement.querySelector('.popup__text--capacity').textContent = `${dataList.offer.rooms  } комнаты для ${dataList.offer.guests} гостей`;
-  } else {
-    advertisementElement.querySelector('.popup__text--capacity').remove();
   }
   if (dataList.offer.photos) {
     dataList.offer.photos.forEach((photo) => popupPhotoList.appendChild(createImage(photo)));

@@ -1,15 +1,23 @@
 import {showAlert} from './utils.js';
 import {mapFiltersElement, disableForm} from './form.js';
+
 const URL_GET = 'https://26.javascript.pages.academy/keksobooking/data';
 const URL_SEND = 'https://26.javascript.pages.academy/keksobooking/';
 
 const getData = (onSuccess) => {
   fetch(URL_GET)
-    .then((response) => response.json())
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+      else {
+        throw new Error('Данные с сервера не получены, обновите страницу');
+      }
+    })
     .then((serverData) => onSuccess(serverData))
-    .catch((e) => {
-      console.log(e);
-      showAlert('Данные с сервера не получены, обновите страницу');
+    .catch((err) => {
+      console.log(err);
+      showAlert(err);
       disableForm(mapFiltersElement);
     });
 };

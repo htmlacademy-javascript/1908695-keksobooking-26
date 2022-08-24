@@ -64,9 +64,6 @@ const getRandomArrayUniqueElement = (elements) => {
   return randomElement;
 };
 
-const isEscapeKey = (evt) => evt.key === 'Escape';
-
-
 const debounce = (callback, timeoutDelay = TIMEOUT_DELAY) =>{
   let timeoutId;
 
@@ -75,4 +72,4 @@ const debounce = (callback, timeoutDelay = TIMEOUT_DELAY) =>{
     timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
   };
 };
-export {getRandomArrayElement, getRandomPositiveInteger, getRandomPositiveFloat, getRandomArrayUniqueElement, showAlert, isEscapeKey, debounce};
+export {getRandomArrayElement, getRandomPositiveInteger, getRandomPositiveFloat, getRandomArrayUniqueElement, showAlert, debounce};

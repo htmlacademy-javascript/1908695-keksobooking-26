@@ -1,4 +1,20 @@
 import {sendData} from './api.js';
+import {resetPhotos} from './photo-upload.js';
+
+const MIN_PRICE_OF_HOUSING = {
+  'palace': 10000,
+  'flat': 1000,
+  'house': 5000,
+  'bungalow': 0,
+  'hotel': 3000
+};
+
+const ROOM_CAPACITY = {
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0']
+};
 
 const adFormElement = document.querySelector('.ad-form');
 const mapFiltersElement = document.querySelector('.map__filters');
@@ -45,21 +61,6 @@ const getErrorMessage = () => {
   document.addEventListener('keydown', onErrorMessageExit);
   document.addEventListener('click', onErrorMessageExit);
   document.querySelector('.error__button').addEventListener('click', onErrorMessageExit);
-};
-
-const MIN_PRICE_OF_HOUSING = {
-  'palace': 10000,
-  'flat': 1000,
-  'house': 5000,
-  'bungalow': 0,
-  'hotel': 3000
-};
-
-const ROOM_CAPACITY = {
-  '1': ['1'],
-  '2': ['1', '2'],
-  '3': ['1', '2', '3'],
-  '100': ['0']
 };
 
 //функция для деактивации формы
@@ -206,10 +207,11 @@ const getFormValidation = () => {
 function resetAdForm () {
   //housingTypeInputElement.value = 'flat';
   priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
-  capacityInputElement.value = '1';
+  capacityInputElement.selectedIndex = 3;
   pristine.reset();
   adFormElement.reset();
   priceSliderElement.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInputElement.value]);
+  resetPhotos();
 }
 
 //функции ниже потом внесу в другие функции когда под них появится логика
