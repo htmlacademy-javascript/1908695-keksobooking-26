@@ -16,7 +16,6 @@ const getData = (onSuccess) => {
     })
     .then((serverData) => onSuccess(serverData))
     .catch((err) => {
-      console.log(err);
       showAlert(err);
       disableForm(mapFiltersElement);
     });
