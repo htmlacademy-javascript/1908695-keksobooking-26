@@ -1,5 +1,26 @@
+const ALERT_SHOW_TIME = 5000;
+//const TIMEOUT_DELAY = 500;
+
+const showAlert = (message) => {
+  const alertContainer = document.createElement('div');
+  alertContainer.style.zIndex = '100';
+  alertContainer.style.position = 'fixed';
+  alertContainer.style.left = '0';
+  alertContainer.style.top = '0';
+  alertContainer.style.right = '0';
+  alertContainer.style.padding = '10px 5px';
+  alertContainer.style.fontSize = '30px';
+  alertContainer.style.textAlign = 'center';
+  alertContainer.style.backgroundColor = 'tomato';
+  alertContainer.textContent = message;
+  document.body.append(alertContainer);
+
+  setTimeout(() => {
+    alertContainer.remove();
+  }, ALERT_SHOW_TIME);
+};
 //функция для возврата случайного целого числа в заданном диаипазоне
-const getRandomPositiveInteger = (minValue, maxValue) => {
+/*const getRandomPositiveInteger = (minValue, maxValue) => {
   const lower = Math.ceil(Math.min(Math.abs(minValue), Math.abs(maxValue)));
   const upper = Math.floor(Math.max(Math.abs(minValue), Math.abs(maxValue)));
   const result = Math.random() * (upper - lower + 1) + lower;
@@ -36,10 +57,19 @@ const getRandomArrayElement = (elements) => elements[getRandomPositiveInteger(0,
   return array.slice().sort(() => 0.5 - Math.random()).slice(0, quantity);
 }*/
 //функция для получения случайного неповторяющегося элемента
-const getRandomArrayUniqueElement = (elements) => {
+/*const getRandomArrayUniqueElement = (elements) => {
   const elementsCopy = elements.slice();
   const randomElement = elementsCopy[getRandomPositiveInteger(0, elements.length-1)];
   elements.splice(elements.indexOf(randomElement), 1);
   return randomElement;
 };
-export {getRandomArrayElement, getRandomPositiveInteger, getRandomPositiveFloat, getRandomArrayUniqueElement};
+
+const debounce = (callback, timeoutDelay = TIMEOUT_DELAY) =>{
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};*/
+export {showAlert};

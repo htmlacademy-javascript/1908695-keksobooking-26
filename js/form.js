@@ -1,12 +1,5 @@
-const adForm = document.querySelector('.ad-form');
-const mapFilters = document.querySelector('.map__filters');
-const housingTypeInput = adForm.querySelector('#type');
-const priceInput = adForm.querySelector('#price');
-const checkInInput = adForm.querySelector('#timein');
-const checkOutInput = adForm.querySelector('#timeout');
-const roomNumberInput = adForm.querySelector('#room_number');
-const capacityInput = adForm.querySelector('#capacity');
-const priceSlider = adForm.querySelector('.ad-form__slider');
+import {sendData} from './api.js';
+import {resetPhotos} from './photo-upload.js';
 
 const MIN_PRICE_OF_HOUSING = {
   'palace': 10000,
@@ -21,6 +14,53 @@ const ROOM_CAPACITY = {
   '2': ['1', '2'],
   '3': ['1', '2', '3'],
   '100': ['0']
+};
+
+const adFormElement = document.querySelector('.ad-form');
+const mapFiltersElement = document.querySelector('.map__filters');
+const housingTypeInputElement = adFormElement.querySelector('#type');
+const priceInputElement = adFormElement.querySelector('#price');
+const checkInInputElement = adFormElement.querySelector('#timein');
+const checkOutInputElement = adFormElement.querySelector('#timeout');
+const roomNumberInputElement = adFormElement.querySelector('#room_number');
+const capacityInputElement = adFormElement.querySelector('#capacity');
+const priceSliderElement = adFormElement.querySelector('.ad-form__slider');
+const successMessageElement = document.querySelector('#success').content;
+const errorMessageElement = document.querySelector('#error').content;
+const submitButton = adFormElement.querySelector('.ad-form__submit');
+
+const onSuccessMessageExit = (evt) => {
+  evt.preventDefault();
+  if (evt.key === 'Escape' || !evt.target.closest('.success__message')) {
+    document.querySelector('.success').remove();
+  }
+  document.removeEventListener('keydown', onSuccessMessageExit);
+  document.removeEventListener('click', onSuccessMessageExit);
+};
+const getSuccessMessage = () => {
+  const successPopUp = successMessageElement.cloneNode(true);
+  document.body.append(successPopUp);
+  document.addEventListener('keydown', onSuccessMessageExit);
+  document.addEventListener('click', onSuccessMessageExit);
+};
+
+const onErrorMessageExit = (evt) => {
+  const errorPopUp = errorMessageElement.cloneNode(true);
+  evt.preventDefault();
+  if (evt.key === 'Escape' || !evt.target.closest('.error__message') || evt.target.closest('.error__button')) {
+    document.querySelector('.error').remove();
+  }
+  document.removeEventListener('keydown', onErrorMessageExit);
+  document.removeEventListener('click', onErrorMessageExit);
+  errorPopUp.querySelector('.error__button').removeEventListener('click', onErrorMessageExit);
+};
+
+const getErrorMessage = () => {
+  const errorPopUp = errorMessageElement.cloneNode(true);
+  document.body.append(errorPopUp);
+  document.addEventListener('keydown', onErrorMessageExit);
+  document.addEventListener('click', onErrorMessageExit);
+  document.querySelector('.error__button').addEventListener('click', onErrorMessageExit);
 };
 
 //функция для деактивации формы
@@ -44,7 +84,7 @@ const enableForm = (form) => {
 };
 
 //инициализируем библиотеку Пристин, добавляем кастомные классы
-const pristine = new Pristine(adForm, {
+const pristine = new Pristine(adFormElement, {
   classTo: 'pristine-custom',
   errorClass: 'pristine-custom--invalid',
   successClass: 'pristine-custom--valid',
@@ -53,106 +93,128 @@ const pristine = new Pristine(adForm, {
   errorTextTag: 'div'
 });
 
-//функция для очистки формы и возвращения к первоначальным значениям
-const resetAdForm = () => {
-  priceInput.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
-  capacityInput.value = '1';
-  pristine.reset();
-};
-
 //функции для валидации полей с количеством комнат и количеством гостей и генерация сообщения об ошибке
-const validateRoomNumberInput = () => ROOM_CAPACITY[roomNumberInput.value].includes(capacityInput.value);
-const getCapacityErrorMessage = () => `Размещение в ${roomNumberInput.value} ${roomNumberInput.value === '1' ? 'комнате' : 'комнатах'} для ${capacityInput.value} ${capacityInput.value === '1' ? 'гостя' : 'гостей'} невозможно`;
-const onSyncValidCapacityRoom = () => pristine.validate([roomNumberInput, capacityInput]);
+const validateRoomNumberInput = () => ROOM_CAPACITY[roomNumberInputElement.value].includes(capacityInputElement.value);
+const getCapacityErrorMessage = () => `Размещение в ${roomNumberInputElement.value} ${roomNumberInputElement.value === '1' ? 'комнате' : 'комнатах'} для ${capacityInputElement.value} ${capacityInputElement.value === '1' ? 'гостя' : 'гостей'} невозможно`;
+const onSyncValidCapacityRoom = () => pristine.validate([roomNumberInputElement, capacityInputElement]);
 
 //функции синхронизации для чекина и чекаута для передачи по ссылке при изменении значения одного из полей
 const onCheckInInputChange = () => {
-  checkInInput.value = checkOutInput.value;
+  checkInInputElement.value = checkOutInputElement.value;
 };
 
 const onCheckOutInputChange = () => {
-  checkOutInput.value = checkInInput.value;
+  checkOutInputElement.value = checkInInputElement.value;
 };
 
 //функции для валидации поля с ценой в зависимости от выбранного типа жилья и генерации сообщения об ошибке
-const validatePriceInput = () => priceInput.value>= MIN_PRICE_OF_HOUSING[housingTypeInput.value];
+const validatePriceInput = () => priceInputElement.value>= MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
 const getPriceErrorMessage = () => {
-  if (priceInput.value <= MIN_PRICE_OF_HOUSING[housingTypeInput.value]) {
-    return `минимальная цена ${MIN_PRICE_OF_HOUSING[housingTypeInput.value]}`;
+  if (priceInputElement.value <= MIN_PRICE_OF_HOUSING[housingTypeInputElement.value]) {
+    return `минимальная цена ${MIN_PRICE_OF_HOUSING[housingTypeInputElement.value]}`;
   }
 };
 
 //функция для обработки изменения поля с выбором жилья
 const onHousingTypeInputChange = () => {
-  priceInput.min = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
-  priceInput.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInput.value];
+  priceInputElement.min = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
+  priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
 };
 
+// Блокируем кнопку при отправке формы
+const blockSubmitButton = () => {
+  submitButton.setAttribute('disabled', 'disabled');
+  submitButton.textContent = 'Отправляю...';
+};
+
+// Разблокируем кнопку
+const unblockSubmitButton = () => {
+  submitButton.removeAttribute('disabled');
+  submitButton.textContent = 'Опубликовать';
+};
+
+const onSubmitSendSuccess = () => {
+  getSuccessMessage();
+  unblockSubmitButton();
+  resetAdForm();
+};
+
+const onSubmitSendError = () => {
+  getErrorMessage();
+  unblockSubmitButton();
+};
 //функция обработки события отправки формы для передачи по ссылке
 const onAdFormSubmit = (evt) => {
+  evt.preventDefault();
   const isValid = pristine.validate();
-  if (!isValid) {
-    evt.preventDefault();
+
+  if (isValid) {
+    blockSubmitButton();
+    sendData(onSubmitSendSuccess, onSubmitSendError, new FormData(evt.target));
+  } else {
+    onSubmitSendError();
   }
 };
 
+
 //инициализируем слайдер и настраиваем его
-noUiSlider.create(priceSlider, {
-  range: {
-    min: 0,
-    max: 100000,
-  },
-  start: MIN_PRICE_OF_HOUSING[housingTypeInput.value],
-  step: 1,
-  connect: 'lower',
-  format: {
-    to: function (value) {
-      return value.toFixed(0);
+const initNoUiSlider = () => {
+  noUiSlider.create(priceSliderElement, {
+    range: {
+      min: 0,
+      max: 100000,
     },
-    from: function (value) {
-      return parseFloat(value);
+    start: MIN_PRICE_OF_HOUSING[housingTypeInputElement.value],
+    step: 1,
+    connect: 'lower',
+    format: {
+      to: function (value) {
+        return value.toFixed(0);
+      },
+      from: function (value) {
+        return parseFloat(value);
+      },
     },
-  },
-});
+  });
 
-priceSlider.noUiSlider.on('update', (values, handle) => {
-  priceInput.value = values[handle];
-});
+  priceSliderElement.noUiSlider.on('update', (values, handle) => {
+    priceInputElement.value = values[handle];
+  });
 
-priceInput.addEventListener('change', function () {
-  priceSlider.noUiSlider.set(this.value);
-});
+  priceInputElement.addEventListener('change', function () {
+    priceSliderElement.noUiSlider.set(this.value);
+  });
 
-housingTypeInput.addEventListener('change',  () => {
-  priceSlider.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInput.value]);
-});
-
-/*const makeSliderDisabled = () => {
-  priceSlider.setAttribute('disabled', 'disabled');
+  housingTypeInputElement.addEventListener('change',  () => {
+    priceSliderElement.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInputElement.value]);
+  });
 };
-
-const makeSliderEnabled = () => {
-  priceSlider.removeAttribute('disabled');
-};*/
 
 //функция-сборка всех функций связянных с валидацией и отправкой формы
 const getFormValidation = () => {
-  adForm.addEventListener('submit', onAdFormSubmit);
-  pristine.addValidator(priceInput, validatePriceInput, getPriceErrorMessage);
-  pristine.addValidator(capacityInput, validateRoomNumberInput, getCapacityErrorMessage);
-  pristine.addValidator(roomNumberInput, validateRoomNumberInput, getCapacityErrorMessage);
-  housingTypeInput.addEventListener('change', onHousingTypeInputChange);
-  checkInInput.addEventListener('change', onCheckOutInputChange);
-  checkOutInput.addEventListener('change', onCheckInInputChange);
-  roomNumberInput.addEventListener('change', onSyncValidCapacityRoom);
-  capacityInput.addEventListener('change', onSyncValidCapacityRoom);
+  initNoUiSlider();
+  adFormElement.addEventListener('submit', onAdFormSubmit);
+  pristine.addValidator(priceInputElement, validatePriceInput, getPriceErrorMessage);
+  pristine.addValidator(capacityInputElement, validateRoomNumberInput, getCapacityErrorMessage);
+  pristine.addValidator(roomNumberInputElement, validateRoomNumberInput, getCapacityErrorMessage);
+  housingTypeInputElement.addEventListener('change', onHousingTypeInputChange);
+  checkInInputElement.addEventListener('change', onCheckOutInputChange);
+  checkOutInputElement.addEventListener('change', onCheckInInputChange);
+  roomNumberInputElement.addEventListener('change', onSyncValidCapacityRoom);
+  capacityInputElement.addEventListener('change', onSyncValidCapacityRoom);
 };
+//функция для очистки формы и возвращения к первоначальным значениям
+function resetAdForm () {
+  priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
+  capacityInputElement.selectedIndex = 3;
+  pristine.reset();
+  adFormElement.reset();
+  priceSliderElement.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInputElement.value]);
+  resetPhotos();
+}
 
 //функции ниже потом внесу в другие функции когда под них появится логика
 getFormValidation();
-//disableForm(adForm);
-disableForm(mapFilters);
-resetAdForm();
 
-export {enableForm, mapFilters, adForm, resetAdForm, disableForm};
+export {enableForm, mapFiltersElement, adFormElement, resetAdForm, disableForm};
 

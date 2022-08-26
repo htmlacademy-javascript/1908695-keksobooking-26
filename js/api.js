@@ -1,12 +1,39 @@
-const getData = (onSuccess, onFail) => {
-  fetch('https://26.javascript.pages.academy/keksobooking/data')
+import {showAlert} from './utils.js';
+import {mapFiltersElement, disableForm} from './form.js';
+
+const URL_GET = 'https://26.javascript.pages.academy/keksobooking/data';
+const URL_SEND = 'https://26.javascript.pages.academy/keksobooking/';
+
+const getData = (onSuccess) => {
+  fetch(URL_GET)
     .then((response) => {
       if (response.ok) {
         return response.json();
-      } else {
-        onFail();
       }
+      else {
+        throw new Error('Данные с сервера не получены, обновите страницу');
+      }
+    })
+    .then((serverData) => onSuccess(serverData))
+    .catch((err) => {
+      showAlert(err);
+      disableForm(mapFiltersElement);
     });
 };
-getData();
-export {getData};
+
+
+const sendData = (onSuccess, onError, body) => {
+  fetch(URL_SEND,
+    {
+      method: 'POST',
+      body,
+    }).then((response) => {
+    if (response.ok) {
+      onSuccess();
+    } else {
+      onError();
+    }
+  }).catch((error) => onError(error));
+};
+
+export {getData, sendData};
