@@ -1,5 +1,5 @@
 import {showAlert} from './utils.js';
-import {mapFiltersElement, disableForm} from './form.js';
+import {makeFormsDisabled} from './form.js';
 
 const URL_GET = 'https://26.javascript.pages.academy/keksobooking/data';
 const URL_SEND = 'https://26.javascript.pages.academy/keksobooking/';
@@ -17,7 +17,7 @@ const getData = (onSuccess) => {
     .then((serverData) => onSuccess(serverData))
     .catch((err) => {
       showAlert(err);
-      disableForm(mapFiltersElement);
+      makeFormsDisabled();
     });
 };
 
