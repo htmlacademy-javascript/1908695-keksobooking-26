@@ -126,6 +126,15 @@ const onHousingTypeInputChange = () => {
   priceInputElement.min = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
   priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
 };
+//функция для очистки формы и возвращения к первоначальным значениям
+const resetAdForm = () => {
+  priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
+  capacityInputElement.selectedIndex = 3;
+  pristine.reset();
+  adFormElement.reset();
+  priceSliderElement.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInputElement.value]);
+  resetPhotos();
+};
 
 // Блокируем кнопку при отправке формы
 const blockSubmitButton = () => {
@@ -209,16 +218,6 @@ const getFormValidation = () => {
   roomNumberInputElement.addEventListener('change', onSyncValidCapacityRoom);
   capacityInputElement.addEventListener('change', onSyncValidCapacityRoom);
 };
-
-//функция для очистки формы и возвращения к первоначальным значениям
-function resetAdForm () {
-  priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
-  capacityInputElement.selectedIndex = 3;
-  pristine.reset();
-  adFormElement.reset();
-  priceSliderElement.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInputElement.value]);
-  resetPhotos();
-}
 
 export {enableForm, mapFiltersElement, adFormElement, resetAdForm, makeFormsDisabled, getFormValidation};
 
