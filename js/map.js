@@ -1,6 +1,7 @@
 import {enableForm, mapFiltersElement, adFormElement, resetAdForm} from './form.js';
 import {getAdvertisements} from './create-advertisements.js';
 import {getData} from './api.js';
+import {initFilters} from './filter.js';
 
 const ADVERTS_AMOUNT = 10;
 const PRECISE_NUMBER = 5;
@@ -14,7 +15,7 @@ const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">Op
 
 const addressInputElement = document.querySelector('#address');
 const resetButtonElement = document.querySelector('.ad-form__reset');
-
+//объявляю переменную, чтобы потом к ней обращаться, как внутри функции для инициализации карты, так и снаружи для работы с тайлами, маркерами и тп
 let map = null;
 
 const mainPinIcon = L.icon({
@@ -59,6 +60,9 @@ initMap();
 //создаем слой для отрисовки маркеров и добавляем на карту
 const markerGroup = L.layerGroup().addTo(map);
 
+//функция для очистки слоя
+const clearMarkerGroup = () => markerGroup.clearLayers();
+
 //рисуем маркер и добавляем попап, куда передаем данные с объектом объявления
 const createSecondaryMarker =  (adData) => {
   const marker = L.marker({
@@ -76,17 +80,20 @@ const createSecondaryMarker =  (adData) => {
 
 //создаем маркеры на основе данных полученных с сервера (пока моковые)
 const createAdvertsMarkers  = (data) => {
+  map.closePopup();
+  clearMarkerGroup();
   data.forEach((dataElement) => {
     createSecondaryMarker(dataElement);
   });
 };
 
-//функция для отрисовки состояния карты по умолчанию
+//функция для отрисовки состояния карты по умолчанию, использую FD, чтобы можно было ее вызвать раньше чем объявила, пробовала перемесить в другой участок кода, но тогда надо и другие функции перемещать и вся логиика у меня сыпется
 function onDefaultMap  () {
   addressInputElement.value = `${DEFAULT_LAT_LNG.lat} ${DEFAULT_LAT_LNG.lng}`;
   getData(
     (dataList) => {
       createAdvertsMarkers(dataList.slice(0, ADVERTS_AMOUNT));
+      initFilters(dataList.slice());
       enableForm(adFormElement);
       enableForm(mapFiltersElement);
     },
@@ -114,4 +121,4 @@ const resetAllElements = () => {
 };
 resetButtonElement.addEventListener('click', resetAllElements);
 
-export {createAdvertsMarkers};
+export {createAdvertsMarkers, ADVERTS_AMOUNT};

@@ -37,7 +37,7 @@ const onSuccessMessageExit = (evt) => {
   document.removeEventListener('keydown', onSuccessMessageExit);
   document.removeEventListener('click', onSuccessMessageExit);
 };
-const getSuccessMessage = () => {
+const showSuccessMessage = () => {
   const successPopUp = successMessageElement.cloneNode(true);
   document.body.append(successPopUp);
   document.addEventListener('keydown', onSuccessMessageExit);
@@ -55,7 +55,7 @@ const onErrorMessageExit = (evt) => {
   errorPopUp.querySelector('.error__button').removeEventListener('click', onErrorMessageExit);
 };
 
-const getErrorMessage = () => {
+const showErrorMessage = () => {
   const errorPopUp = errorMessageElement.cloneNode(true);
   document.body.append(errorPopUp);
   document.addEventListener('keydown', onErrorMessageExit);
@@ -71,6 +71,12 @@ const disableForm = (form) => {
   formChildren.forEach((element) => {
     element.setAttribute('disabled', 'disabled');
   });
+};
+
+//общая функция деактивации обеих форм
+const makeFormsDisabled = () => {
+  disableForm(mapFiltersElement);
+  disableForm(adFormElement);
 };
 
 //функция для активации формы
@@ -120,6 +126,15 @@ const onHousingTypeInputChange = () => {
   priceInputElement.min = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
   priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
 };
+//функция для очистки формы и возвращения к первоначальным значениям
+const resetAdForm = () => {
+  priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
+  capacityInputElement.selectedIndex = 3;
+  pristine.reset();
+  adFormElement.reset();
+  priceSliderElement.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInputElement.value]);
+  resetPhotos();
+};
 
 // Блокируем кнопку при отправке формы
 const blockSubmitButton = () => {
@@ -133,14 +148,14 @@ const unblockSubmitButton = () => {
   submitButton.textContent = 'Опубликовать';
 };
 
-const onSubmitSendSuccess = () => {
-  getSuccessMessage();
+const onSendSuccess = () => {
+  showSuccessMessage();
   unblockSubmitButton();
   resetAdForm();
 };
 
-const onSubmitSendError = () => {
-  getErrorMessage();
+const onSendError = () => {
+  showErrorMessage();
   unblockSubmitButton();
 };
 //функция обработки события отправки формы для передачи по ссылке
@@ -150,9 +165,9 @@ const onAdFormSubmit = (evt) => {
 
   if (isValid) {
     blockSubmitButton();
-    sendData(onSubmitSendSuccess, onSubmitSendError, new FormData(evt.target));
+    sendData(onSendSuccess, onSendError, new FormData(evt.target));
   } else {
-    onSubmitSendError();
+    onSendError();
   }
 };
 
@@ -203,18 +218,6 @@ const getFormValidation = () => {
   roomNumberInputElement.addEventListener('change', onSyncValidCapacityRoom);
   capacityInputElement.addEventListener('change', onSyncValidCapacityRoom);
 };
-//функция для очистки формы и возвращения к первоначальным значениям
-function resetAdForm () {
-  priceInputElement.placeholder = MIN_PRICE_OF_HOUSING[housingTypeInputElement.value];
-  capacityInputElement.selectedIndex = 3;
-  pristine.reset();
-  adFormElement.reset();
-  priceSliderElement.noUiSlider.set(MIN_PRICE_OF_HOUSING[housingTypeInputElement.value]);
-  resetPhotos();
-}
 
-//функции ниже потом внесу в другие функции когда под них появится логика
-getFormValidation();
-
-export {enableForm, mapFiltersElement, adFormElement, resetAdForm, disableForm};
+export {enableForm, mapFiltersElement, adFormElement, resetAdForm, makeFormsDisabled, getFormValidation};
 
