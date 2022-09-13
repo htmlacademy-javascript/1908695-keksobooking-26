@@ -115,9 +115,12 @@ const resetAllElements = () => {
   map.setView(DEFAULT_LAT_LNG, ZOOM);
   map.closePopup();
   mapFiltersElement.reset();
-  onDefaultMap();
   adFormElement.reset();
   resetAdForm();
+  onDefaultMap();
+  setTimeout(() => {
+    addressInputElement.value = `${DEFAULT_LAT_LNG.lat} ${DEFAULT_LAT_LNG.lng}`;
+  }, 1);
 };
 resetButtonElement.addEventListener('click', resetAllElements);
 
