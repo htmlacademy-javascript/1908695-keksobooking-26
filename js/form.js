@@ -1,5 +1,6 @@
 import {sendData} from './api.js';
 import {resetPhotos} from './photo-upload.js';
+import {resetAllElements} from './map.js';
 
 const MIN_PRICE_OF_HOUSING = {
   'palace': 10000,
@@ -29,38 +30,59 @@ const successMessageElement = document.querySelector('#success').content;
 const errorMessageElement = document.querySelector('#error').content;
 const submitButton = adFormElement.querySelector('.ad-form__submit');
 
-const onSuccessMessageExit = (evt) => {
+const onSuccessMessageExitClick = (evt) => {
   evt.preventDefault();
-  if (evt.key === 'Escape' || !evt.target.closest('.success__message')) {
+  if (!evt.target.closest('.success__message')) {
     document.querySelector('.success').remove();
   }
-  document.removeEventListener('keydown', onSuccessMessageExit);
-  document.removeEventListener('click', onSuccessMessageExit);
+  document.removeEventListener('keydown', onSuccessMessageExitEsc);
+  document.removeEventListener('click', onSuccessMessageExitClick);
 };
+
+function onSuccessMessageExitEsc (evt) {
+  evt.preventDefault();
+  if (evt.key === 'Escape') {
+    document.querySelector('.success').remove();
+  }
+  document.removeEventListener('keydown', onSuccessMessageExitEsc);
+  document.removeEventListener('click', onSuccessMessageExitClick);
+}
+
 const showSuccessMessage = () => {
   const successPopUp = successMessageElement.cloneNode(true);
   document.body.append(successPopUp);
-  document.addEventListener('keydown', onSuccessMessageExit);
-  document.addEventListener('click', onSuccessMessageExit);
+  document.addEventListener('keydown', onSuccessMessageExitEsc);
+  document.addEventListener('click', onSuccessMessageExitClick);
 };
 
-const onErrorMessageExit = (evt) => {
+const onErrorMessageExitClick = (evt) => {
   const errorPopUp = errorMessageElement.cloneNode(true);
   evt.preventDefault();
   if (evt.key === 'Escape' || !evt.target.closest('.error__message') || evt.target.closest('.error__button')) {
     document.querySelector('.error').remove();
   }
-  document.removeEventListener('keydown', onErrorMessageExit);
-  document.removeEventListener('click', onErrorMessageExit);
-  errorPopUp.querySelector('.error__button').removeEventListener('click', onErrorMessageExit);
+  document.removeEventListener('keydown', onErrorMessageExitEsc);
+  document.removeEventListener('click', onErrorMessageExitClick);
+  errorPopUp.querySelector('.error__button').removeEventListener('click', onErrorMessageExitClick);
 };
+
+function onErrorMessageExitEsc (evt) {
+  const errorPopUp = errorMessageElement.cloneNode(true);
+  evt.preventDefault();
+  if (evt.key === 'Escape') {
+    document.querySelector('.error').remove();
+  }
+  document.removeEventListener('keydown', onErrorMessageExitEsc);
+  document.removeEventListener('click', onErrorMessageExitClick);
+  errorPopUp.querySelector('.error__button').removeEventListener('click', onErrorMessageExitClick);
+}
 
 const showErrorMessage = () => {
   const errorPopUp = errorMessageElement.cloneNode(true);
   document.body.append(errorPopUp);
-  document.addEventListener('keydown', onErrorMessageExit);
-  document.addEventListener('click', onErrorMessageExit);
-  document.querySelector('.error__button').addEventListener('click', onErrorMessageExit);
+  document.addEventListener('keydown', onErrorMessageExitEsc);
+  document.addEventListener('click', onErrorMessageExitClick);
+  document.querySelector('.error__button').addEventListener('click', onErrorMessageExitClick);
 };
 
 //функция для деактивации формы
@@ -152,6 +174,7 @@ const onSendSuccess = () => {
   showSuccessMessage();
   unblockSubmitButton();
   resetAdForm();
+  resetAllElements();
 };
 
 const onSendError = () => {
@@ -167,7 +190,7 @@ const onAdFormSubmit = (evt) => {
     blockSubmitButton();
     sendData(onSendSuccess, onSendError, new FormData(evt.target));
   } else {
-    onSendError();
+    unblockSubmitButton();
   }
 };
 

@@ -52,6 +52,9 @@ const filterOffers = (offers, rerenderMarkers) => {
     filterByGuestsCount(offer.guests) &&
     filterByFeatures(offer.features)
   );
+  if (filteredOffers.length > ADVERTS_AMOUNT) {
+    return;
+  }
   rerenderMarkers(filteredOffers.slice(0, ADVERTS_AMOUNT));
 };
 
