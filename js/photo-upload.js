@@ -6,26 +6,27 @@ const avatarPreviewElement = document.querySelector('.ad-form-header__preview im
 const housePicInputElement = document.querySelector('.ad-form__input');
 const housePicPreviewElement = document.querySelector('.ad-form__photo');
 
+//функция для проверки валидности типа загружаемого файла
+const checkFileType = (inputElement) => {
+  const file = inputElement.files[0];
+  const fileName = file.name.toLowerCase();
+  return FILE_TYPES.some((type) => fileName.endsWith(type));
+};
+
 //функция для загрузки фото в поле "аватар"
 const onAvatarChange = () => {
-  const file = avatarInputElement.files[0];
-  const fileName = file.name.toLowerCase();
-  const matches = FILE_TYPES.some((type) => fileName.endsWith(type));
-  if (matches) {
-    avatarPreviewElement.src = URL.createObjectURL(file);
+  if (checkFileType(avatarInputElement)) {
+    avatarPreviewElement.src = URL.createObjectURL(avatarInputElement.files[0]);
   }
 };
+
 //функция для загрузки фото в поле "фото жилья"
 const onHousePictureChange = () => {
-  const fileHouse = housePicInputElement.files[0];
-  const fileName = fileHouse.name.toLowerCase();
-  const matches = FILE_TYPES.some((type) => fileName.endsWith(type));
-
-  if (matches) {
+  if (checkFileType(housePicInputElement)) {
     const photo = document.createElement('img');
     photo.style.width = '70px';
     photo.style.height = '70px';
-    photo.src = URL.createObjectURL(fileHouse);
+    photo.src = URL.createObjectURL(housePicInputElement.files[0]);
     housePicPreviewElement.append(photo);
   }
 };

@@ -124,4 +124,4 @@ const resetAllElements = () => {
 };
 resetButtonElement.addEventListener('click', resetAllElements);
 
-export {createAdvertsMarkers, ADVERTS_AMOUNT};
+export {createAdvertsMarkers, ADVERTS_AMOUNT, resetAllElements};

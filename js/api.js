@@ -10,9 +10,7 @@ const getData = (onSuccess) => {
       if (response.ok) {
         return response.json();
       }
-      else {
-        throw new Error('Данные с сервера не получены, обновите страницу');
-      }
+      throw new Error('Данные с сервера не получены, обновите страницу');
     })
     .then((serverData) => onSuccess(serverData))
     .catch((err) => {
