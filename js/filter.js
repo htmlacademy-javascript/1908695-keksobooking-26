@@ -45,17 +45,21 @@ const filterByFeatures = (features) => {
 };
 
 const filterOffers = (offers, rerenderMarkers) => {
-  const filteredOffers = offers.filter(({ offer }) =>
-    filterByHouseType(offer.type) &&
-    filterByPrice(offer.price) &&
-    filterByRoomsCount(offer.rooms) &&
-    filterByGuestsCount(offer.guests) &&
-    filterByFeatures(offer.features)
-  );
-  if (filteredOffers.length > ADVERTS_AMOUNT) {
-    return;
+  const filteredOffers = [];
+  for (const offer of offers) {
+    if (filterByHouseType(offer.offer.type) &&
+      filterByPrice(offer.offer.price) &&
+      filterByRoomsCount(offer.offer.rooms) &&
+      filterByGuestsCount(offer.offer.guests) &&
+      filterByFeatures(offer.offer.features))
+    {
+      filteredOffers.push(offer);
+      if (filteredOffers.length >= ADVERTS_AMOUNT) {
+        break;
+      }
+    }
   }
-  rerenderMarkers(filteredOffers.slice(0, ADVERTS_AMOUNT));
+  return rerenderMarkers(filteredOffers.slice(0, 10));
 };
 
 const initFilters = (offers) => {
